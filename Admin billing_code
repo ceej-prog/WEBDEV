@@ -1,800 +1,1383 @@
-<!DOCTYPE html>
+
+html_code = '''<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CLINIQ - Billing</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #ffffff;
-      font-size: 13px;
-    }
-
-    .top-navbar {
-      background-color: #75bb98;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      padding: 0 14px;
-      gap: 0;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-    }
-    .navbar-brand {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      color: #ffffff;
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      width: 200px;
-      flex-shrink: 0;
-    }
-    .navbar-brand img {
-      height: 28px; width: 28px;
-      object-fit: contain;
-      filter: brightness(0) invert(1);
-    }
-    .navbar-search { flex: 1; max-width: 2000px; }
-    .search-display {
-      width: 100%; height: 32px;
-      border-radius: 20px;
-      background: #ffffff;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 52px; left: 0;
-      width: 200px;
-      height: calc(100vh - 52px);
-      background-color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      z-index: 99;
-      border-right: 1px solid #e4eaf2;
-    }
-
-    .user-card {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 14px 12px 12px;
-      background: #75bb98;
-      border-radius: 10px;
-      padding: 9px 11px;
-    }
-    .user-avatar {
-      background: #ffffff;
-      color: #5d77a6;
-      font-weight: 700;
-      font-size: 0.78rem;
-      width: 36px; height: 36px;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .user-name { color: #ffffff; font-weight: 600; font-size: 0.78rem; line-height: 1.3; }
-    .user-role { color: rgba(255,255,255,0.75); font-size: 0.67rem; }
-
-    .nav-section-pill {
-      display: inline-block;
-      background: #75bb98;
-      color: #ffffff;
-      font-size: 0.72rem;
-      font-weight: 700;
-      border-radius: 20px;
-      padding: 3px 14px;
-      margin: 8px 12px 4px;
-    }
-
-    .nav-link-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 16px;
-      color: #75bb98;
-      font-size: 0.78rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition: background 0.12s;
-    }
-    .nav-link-item:hover { background: #f0f4fa; color: #75bb98; }
-    .nav-link-item.active { background: #eef2fb; font-weight: 700; }
-    .nav-link-item i { font-size: 1.05rem; width: 20px; color: #6082b6; }
-
-    .sign-out-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 10px 12px 6px;
-      background: #75bb98;
-      border-radius: 20px;
-      padding: 7px 14px;
-      color: #ffffff;
-      font-size: 0.78rem;
-      font-weight: 600;
-      text-decoration: none;
-      width: fit-content;
-      cursor: pointer;
-      border: none;
-    }
-    .sign-out-btn:hover { background: #4a6290; color: #ffffff; }
-
-    .sidebar-logo-bottom {
-      margin-top: auto;
-      display: flex;
-      justify-content: center;
-      padding: 16px 0 18px;
-    }
-    .sidebar-logo-bottom img { height: 60px; width: 60px; object-fit: contain; }
-
-    .main-wrapper {
-      margin-left: 200px;
-      margin-top: 52px;
-      padding: 26px 28px;
-    }
-
-    .page-title { font-size: 1.45rem; font-weight: 700; color: #2f6a4d; }
-    .page-subtitle { color: #2f6a4d; font-size: 0.78rem; margin-top: 3px; }
-
-    .tab-bar {
-      display: flex;
-      gap: 6px;
-      margin: 18px 0 16px;
-    }
-    .tab-btn {
-      padding: 6px 18px;
-      border-radius: 20px;
-      border: 1.5px solid #c9d3e0;
-      background: #ffffff;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: #5d77a6;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-    }
-    .tab-btn.active {
-      background: #5d77a6;
-      color: #ffffff;
-      border-color: #5d77a6;
-      font-weight: 600;
-    }
-    .tab-btn:hover:not(.active) { background: #f0f4fa; }
-
-    .alert-banner {
-      background: #fffae6;
-      border: 1.5px solid #fef9c3;
-      border-radius: 10px;
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: #ca8a04;
-      margin-bottom: 22px;
-    }
-    .alert-banner i { color: #f5c842; font-size: 1.1rem; }
-
-    .patient-card {
-      background: #ffcf60;
-      border: 1.5px solid #f0e8c8;
-      border-radius: 12px;
-      padding: 18px 20px;
-      margin-bottom: 18px;
-    }
-    .patient-card.normal-card {
-      background: #f8fff8;
-      border-color: #c8e6c9;
-    }
-
-    .patient-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-    .patient-info-name {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #222;
-    }
-    .patient-info-meta {
-      font-size: 0.72rem;
-      color: #666;
-      margin-top: 2px;
-    }
-    .patient-info-meta a {
-      color: #5d77a6;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .patient-info-meta a:hover { text-decoration: underline; }
-
-    .patient-card-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .badge-abnormal {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: #fff0f0;
-      border: 1.5px solid #e57373;
-      color: #c62828;
-      font-size: 0.72rem;
-      font-weight: 700;
-      border-radius: 20px;
-      padding: 5px 14px;
-    }
-    .badge-abnormal i { font-size: 0.85rem; color: #e57373; }
-
-    .badge-normal {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: #e8f5e9;
-      border: 1.5px solid #66bb6a;
-      color: #2e7d32;
-      font-size: 0.72rem;
-      font-weight: 700;
-      border-radius: 20px;
-      padding: 5px 14px;
-    }
-
-    .btn-pdf {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #2e7d32;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      padding: 7px 16px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.76rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .btn-pdf:hover { background: #1b5e20; }
-    .btn-pdf i { font-size: 0.9rem; }
-
-    .results-table {
-      width: 100%;
-      border-collapse: collapse;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid #e0e0e0;
-    }
-    .results-table thead th {
-      background: #f5f5f5;
-      color: #000;
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 10px 16px;
-      text-align: left;
-      border-bottom: 1.5px solid #e0e0e0;
-    }
-    .results-table tbody td {
-      padding: 11px 16px;
-      font-size: 0.78rem;
-      border-bottom: 1px solid #f0f0f0;
-      vertical-align: middle;
-    }
-    .results-table tbody tr:last-child td { border-bottom: none; }
-
-    .result-high { color: #c62828; font-weight: 700; }
-    .result-normal-val { color: #2e7d32; font-weight: 600; }
-    .result-low { color: #1565c0; font-weight: 700; }
-
-    .flag-high {
-      color: #c62828;
-      font-weight: 700;
-      font-size: 0.72rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .flag-high::before { content: "↑ "; }
-
-    .flag-normal {
-      color: #2e7d32;
-      font-weight: 600;
-      font-size: 0.72rem;
-    }
-
-    .flag-low {
-      color: #1565c0;
-      font-weight: 700;
-      font-size: 0.72rem;
-    }
-    .flag-low::before { content: "↓ "; }
-
-    .tab-content-panel { display: none; }
-    .tab-content-panel.active { display: block; }
-
-    .invoice-table {
-      width: 100%;
-      border-collapse: collapse;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1.5px solid #c9c9c6;
-    }
-    .invoice-table thead th {
-      background: #f8f9fb;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      padding: 12px 16px;
-      border-bottom: 1.5px solid #c9c9c6;
-      color: #000;
-    }
-    .invoice-table tbody td {
-      padding: 12px 16px;
-      font-size: 0.78rem;
-      color: #444;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .invoice-table tbody tr:last-child td { border-bottom: none; }
-    .invoice-table tfoot td {
-      padding: 12px 16px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      border-top: 1.5px solid #c9c9c6;
-      background: #f8f9fb;
-    }
-
-    .status-paid { background: #e8f5e9; color: #2e7d32; border-radius: 20px; padding: 3px 12px; font-size: 0.7rem; font-weight: 700; display: inline-block; }
-    .status-unpaid { background: #fff3e0; color: #e65100; border-radius: 20px; padding: 3px 12px; font-size: 0.7rem; font-weight: 700; display: inline-block; }
-
-    .history-card {
-      background: #fff;
-      border: 1.5px solid #c9c9c6;
-      border-radius: 10px;
-      padding: 16px 20px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .history-date { font-size: 0.72rem; color: #888; }
-    .history-amount { font-size: 1rem; font-weight: 700; color: #5d77a6; }
-    .history-ref { font-size: 0.72rem; color: #aaa; }
-
-    .toast-msg {
-      position: fixed;
-      bottom: 28px; right: 28px;
-      background: #5873a1;
-      color: #ffffff;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      font-family: 'Poppins', sans-serif;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.25s, transform 0.25s;
-      pointer-events: none;
-      z-index: 9999;
-    }
-    .toast-msg.show { opacity: 1; transform: translateY(0); }
-
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal-box {
-      background: #fff;
-      border-radius: 14px;
-      padding: 28px 32px;
-      max-width: 480px;
-      width: 90%;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-    }
-    .modal-title { font-size: 1rem; font-weight: 700; color: #000; margin-bottom: 8px; }
-    .modal-body { font-size: 0.82rem; color: #555; margin-bottom: 20px; }
-    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
-    .modal-btn-cancel {
-      background: #f0f0f0; border: none; border-radius: 8px;
-      padding: 8px 20px; font-family: 'Poppins', sans-serif;
-      font-size: 0.78rem; font-weight: 500; cursor: pointer;
-    }
-    .modal-btn-download {
-      background: #2e7d32; color: #fff; border: none; border-radius: 8px;
-      padding: 8px 20px; font-family: 'Poppins', sans-serif;
-      font-size: 0.78rem; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .modal-btn-download:hover { background: #1b5e20; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLINIQ - Lab Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f0;
+            color: #333;
+        }
+        
+        /* Top Header */
+        .top-header {
+            background: #75BB98;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .top-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+        
+        .top-header .logo img {
+            width: 28px;
+            height: 28px;
+            filter: brightness(0) invert(1);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: #75BB98;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            bottom: 0;
+            padding: 20px 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-card {
+            background: rgba(255,255,255,0.15);
+            margin: 0 12px 20px;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .user-info .name {
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .user-info .role {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        
+        .nav-section {
+            margin-bottom: 4px;
+        }
+        
+        .nav-section-title {
+            padding: 12px 16px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            margin: 2px 8px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            width: calc(100% - 16px);
+            text-align: left;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .nav-item.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .nav-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sign-out {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            color: rgba(255,255,255,0.85);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+            width: 100%;
+        }
+        
+        .sign-out:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            justify-content: center;
+            padding: 20px 0 10px;
+        }
+        
+        .sidebar-logo img {
+            width: 60px;
+            opacity: 0.25;
+            filter: brightness(0) invert(1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 56px;
+            padding: 24px;
+            min-height: calc(100vh - 56px);
+        }
+        
+        .page-header {
+            margin-bottom: 20px;
+        }
+        
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .page-header p {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background: white;
+            color: #666;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            background: #f5f5f5;
+        }
+        
+        .tab.active {
+            background: #6db89c;
+            color: white;
+            border-color: #6db89c;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Alert Banner */
+        .alert-banner {
+            background: #fff8e1;
+            border: 1px solid #ffd54f;
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #856404;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .alert-banner i {
+            color: #f9a825;
+            font-size: 16px;
+        }
+        
+        /* Patient Cards */
+        .patient-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        
+        .patient-card.abnormal {
+            border: 2px solid #ffcdd2;
+            background: #fff8f8;
+        }
+        
+        .patient-card.normal {
+            border: 2px solid #c8e6c9;
+            background: #f8fff8;
+        }
+        
+        .patient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .patient-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .patient-meta {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .patient-meta .req-id {
+            color: #6db89c;
+            font-weight: 600;
+        }
+        
+        .patient-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .status-tag {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .status-tag.abnormal {
+            background: #ffcdd2;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+        
+        .status-tag.normal {
+            background: #c8e6c9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+        
+        .btn-pdf {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #4a7c59;
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        .btn-pdf:hover {
+            background: #3d6b4a;
+        }
+        
+        /* Results Table */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .results-table th {
+            background: #f5f5f5;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .results-table td {
+            padding: 10px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .result-value {
+            font-weight: 600;
+        }
+        
+        .result-value.high {
+            color: #c62828;
+        }
+        
+        .result-value.normal {
+            color: #2e7d32;
+        }
+        
+        .flag {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .flag.high {
+            color: #c62828;
+        }
+        
+        .flag.normal {
+            color: #2e7d32;
+        }
+        
+        /* Payment History */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        
+        .history-table th {
+            background: #6db89c;
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .history-table td {
+            padding: 14px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .history-table tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .payment-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .payment-status.paid {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        .payment-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Current Invoice */
+        .invoice-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .invoice-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .invoice-status {
+            background: #e8a0a0;
+            color: #8b2635;
+            padding: 4px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #d68989;
+        }
+        
+        .invoice-status.paid {
+            background: #a8d5ba;
+            color: #2d6a4f;
+            border-color: #8bc9a3;
+        }
+        
+        .invoice-clinic {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        
+        .invoice-table th {
+            text-align: left;
+            padding: 10px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .invoice-table td {
+            padding: 10px 8px;
+            font-size: 13px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .invoice-table td:last-child,
+        .invoice-table th:last-child {
+            text-align: right;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .summary-row.discount {
+            color: #7cb342;
+        }
+        
+        .summary-row.total {
+            font-weight: 700;
+            font-size: 15px;
+            color: #333;
+            border-top: 2px solid #eee;
+            padding-top: 12px;
+            margin-top: 4px;
+        }
+        
+        .invoice-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-outline:hover {
+            background: #e8e8e8;
+        }
+        
+        .btn-primary {
+            background: #6db89c;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5aa88a;
+        }
+        
+        .btn-success {
+            background: #7cb342;
+            color: white;
+        }
+        
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .toast {
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toast.success {
+            background: #2e7d32;
+        }
+        
+        .toast.error {
+            background: #c62828;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: modalIn 0.3s ease;
+        }
+        
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal h3 {
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .modal p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .modal-actions .btn {
+            padding: 8px 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            .main-content {
+                margin-left: 60px;
+            }
+            .nav-item span,
+            .user-info,
+            .nav-section-title,
+            .sign-out span {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<!-- TOP NAVBAR -->
-<div class="top-navbar">
-  <div class="navbar-brand">
-    <img src="logo.png" alt="logo"/>
-    CLINIQ
-  </div>
-  <div class="navbar-search">
-    <div class="search-display"></div>
-  </div>
-</div>
-
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <div class="user-card">
-    <div class="user-avatar">SL</div>
-    <div>
-      <div class="user-name">St. Luke's Clinic</div>
-      <div class="user-role">Clinic User</div>
-    </div>
-  </div>
-  <span class="nav-section-pill">Overview</span>
-  <a href="#" class="nav-link-item"><i class="bi bi-grid-1x2"></i> Dashboard</a>
-  <a href="#" class="nav-link-item"><i class="bi bi-flask"></i> Lab Requests</a>
-  <a href="#" class="nav-link-item active"><i class="bi bi-receipt"></i> Billing</a>
-  <a href="#" class="nav-link-item"><i class="bi bi-bar-chart-line"></i> Analytics</a>
-  <button class="sign-out-btn"><i class="bi bi-box-arrow-right"></i> Sign Out</button>
-  <div class="sidebar-logo-bottom">
-    <img src="logo.png" alt="logo"/>
-  </div>
-</div>
-
-<div class="main-wrapper">
-  <div class="page-title">Billing</div>
-  <div class="page-subtitle">Monthly statements from MetroMed Diagnostics</div>
-
-  <div class="tab-bar">
-    <button class="tab-btn" onclick="switchTab('invoice', this)">Current Invoice</button>
-    <button class="tab-btn" onclick="switchTab('history', this)">Payment History</button>
-    <button class="tab-btn active" onclick="switchTab('results', this)">Lab Results</button>
-  </div>
-
-  <div id="tab-results" class="tab-content-panel active">
-
-    <div class="alert-banner">
-      <i class="bi bi-exclamation-triangle-fill"></i>
-      3 Results have abnormal values – review before releasing to patient
-    </div>
-
-    <div class="patient-card" id="card-antoinette">
-      <div class="patient-card-header">
-        <div>
-          <div class="patient-info-name">Antoinette Curitana <span style="font-size:0.78rem;font-weight:400;color:#888;">F, 19y · PT-12654562</span></div>
-          <div class="patient-info-meta">Dr. Katarina Yu · Apr 7, 2026 <a href="#">#REQ-2026-001</a></div>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3 id="modalTitle">Confirm Payment</h3>
+            <p id="modalMessage">Are you sure you want to mark this invoice as paid?</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="confirmPayment()">Confirm</button>
+            </div>
         </div>
-        <div class="patient-card-actions">
-          <span class="badge-abnormal"><i class="bi bi-exclamation-circle"></i> Abnormal</span>
-          <button class="btn-pdf" onclick="openPdfModal('Antoinette Curitana', 'REQ-2026-001')"><i class="bi bi-download"></i> PDF</button>
+    </div>
+
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="logo">
+            <img src="Cliniq Logo.png" alt="CLINIQ">
+            <span>CLINIQ</span>
         </div>
-      </div>
-      <table class="results-table">
-        <thead>
-          <tr>
-            <th>Test</th>
-            <th>Result</th>
-            <th>Reference Range</th>
-            <th>Flag</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="background:#fff8f8;">
-            <td>HbA1c</td>
-            <td class="result-high">7.8%</td>
-            <td>4.0–5.6%</td>
-            <td><span class="flag-high">HIGH</span></td>
-          </tr>
-          <tr style="background:#fff8f8;">
-            <td>Fasting Glucose</td>
-            <td class="result-high">148mg/DL</td>
-            <td>70/100 mg/DL</td>
-            <td><span class="flag-high">HIGH</span></td>
-          </tr>
-        </tbody>
-      </table>
     </div>
-
-    <div class="patient-card normal-card" id="card-pedro">
-      <div class="patient-card-header">
-        <div>
-          <div class="patient-info-name">Pedro Bautista <span style="font-size:0.78rem;font-weight:400;color:#888;">M, 64y · PT-12654562</span></div>
-          <div class="patient-info-meta">Dr. Katarina Yu · Apr 7, 2026 <a href="#">#REQ-2026-002</a></div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="user-card">
+            <div class="user-avatar">SL</div>
+            <div class="user-info">
+                <div class="name">St. Luke's Clinic</div>
+                <div class="role">Clinic User</div>
+            </div>
         </div>
-        <div class="patient-card-actions">
-          <span class="badge-normal"><i class="bi bi-check-circle"></i> Normal</span>
-          <button class="btn-pdf" onclick="openPdfModal('Pedro Bautista', 'REQ-2026-002')"><i class="bi bi-download"></i> PDF</button>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Overview</div>
+            <button class="nav-item active" data-page="dashboard">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </button>
         </div>
-      </div>
-      <table class="results-table">
-        <thead>
-          <tr>
-            <th>Test</th>
-            <th>Result</th>
-            <th>Reference Range</th>
-            <th>Flag</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>CBC-WBC</td>
-            <td class="result-normal-val">7.2 x 10/L</td>
-            <td>4.5–11.0</td>
-            <td><span class="flag-normal">Normal</span></td>
-          </tr>
-          <tr>
-            <td>CBC-Hemoglobin</td>
-            <td class="result-normal-val">146mg/DL</td>
-            <td>13.5 – 17.5</td>
-            <td><span class="flag-normal">Normal</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="patient-card" id="card-rosa">
-      <div class="patient-card-header">
-        <div>
-          <div class="patient-info-name">Rosa Dela Cruz <span style="font-size:0.78rem;font-weight:400;color:#888;">F, 45y · PT-12654563</span></div>
-          <div class="patient-info-meta">Dr. Katarina Yu · Apr 7, 2026 <a href="#">#REQ-2026-003</a></div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Management</div>
+            <button class="nav-item" data-page="lab-requests">
+                <i class="fas fa-flask"></i>
+                <span>Lab Requests</span>
+            </button>
+            <button class="nav-item" data-page="billing">
+                <i class="far fa-credit-card"></i>
+                <span>Billing</span>
+            </button>
         </div>
-        <div class="patient-card-actions">
-          <span class="badge-abnormal"><i class="bi bi-exclamation-circle"></i> Abnormal</span>
-          <button class="btn-pdf" onclick="openPdfModal('Rosa Dela Cruz', 'REQ-2026-003')"><i class="bi bi-download"></i> PDF</button>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Reports</div>
+            <button class="nav-item" data-page="analytics">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </button>
         </div>
-      </div>
-      <table class="results-table">
-        <thead>
-          <tr>
-            <th>Test</th>
-            <th>Result</th>
-            <th>Reference Range</th>
-            <th>Flag</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="background:#fff8f8;">
-            <td>Cholesterol Total</td>
-            <td class="result-high">245mg/DL</td>
-            <td>&lt;200 mg/DL</td>
-            <td><span class="flag-high">HIGH</span></td>
-          </tr>
-          <tr>
-            <td>HDL Cholesterol</td>
-            <td class="result-normal-val">52mg/DL</td>
-            <td>≥40 mg/DL</td>
-            <td><span class="flag-normal">Normal</span></td>
-          </tr>
-          <tr style="background:#fff8f8;">
-            <td>LDL Cholesterol</td>
-            <td class="result-high">168mg/DL</td>
-            <td>&lt;130 mg/DL</td>
-            <td><span class="flag-high">HIGH</span></td>
-          </tr>
-        </tbody>
-      </table>
+        
+        <div class="sidebar-footer">
+            <button class="sign-out" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+            </button>
+            <div class="sidebar-logo">
+                <img src="Cliniq Logo.png" alt="">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Billing</h1>
+            <p>Monthly statements from MetroMed Diagnostics</p>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab(this, 'current')">Current Invoice</button>
+            <button class="tab" onclick="switchTab(this, 'history')">Payment History</button>
+            <button class="tab" onclick="switchTab(this, 'results')">Lab Results</button>
+        </div>
+        
+        <!-- CURRENT INVOICE TAB -->
+        <div class="tab-content active" id="tab-current">
+            <div class="invoice-panel">
+                <div class="invoice-header">
+                    <h2>April 2026 Invoice</h2>
+                    <span class="invoice-status" id="invoiceStatus">Unpaid</span>
+                </div>
+                <div class="invoice-clinic">St. Luke's Family Clinic</div>
+                
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Test</th>
+                            <th>Qty</th>
+                            <th>Price (ea.)</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CBC</td>
+                            <td>14</td>
+                            <td>₱ 350</td>
+                            <td>₱ 4,900</td>
+                        </tr>
+                        <tr>
+                            <td>Urinalysis</td>
+                            <td>20</td>
+                            <td>₱ 220</td>
+                            <td>₱ 4,400</td>
+                        </tr>
+                        <tr>
+                            <td>Lipid Panel</td>
+                            <td>10</td>
+                            <td>₱ 680</td>
+                            <td>₱ 6,800</td>
+                        </tr>
+                        <tr>
+                            <td>HbA1c</td>
+                            <td>7</td>
+                            <td>₱ 550</td>
+                            <td>₱ 3,850</td>
+                        </tr>
+                        <tr>
+                            <td>Thyroid Panel</td>
+                            <td>5</td>
+                            <td>₱ 1,220</td>
+                            <td>₱ 6,100</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₱ 26,050</span>
+                </div>
+                <div class="summary-row discount">
+                    <span>Bulk discount</span>
+                    <span>-₱ 4,520</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total Due</span>
+                    <span id="totalDue">₱ 21,530</span>
+                </div>
+                
+                <div class="invoice-actions">
+                    <button class="btn btn-outline" onclick="downloadInvoicePDF()">
+                        <i class="fas fa-download"></i>
+                        PDF Invoice
+                    </button>
+                    <button class="btn btn-primary" id="markPaidBtn" onclick="openPaymentModal()">Mark as paid</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PAYMENT HISTORY TAB -->
+        <div class="tab-content" id="tab-history">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Period</th>
+                        <th>Amount</th>
+                        <th>Date Paid</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>INV-2026-003</td>
+                        <td>March 2026</td>
+                        <td>₱ 17,284</td>
+                        <td>Apr 5, 2026</td>
+                        <td><span class="payment-status paid">Paid</span></td>
+                        <td><button class="btn-pdf" onclick="downloadHistoryPDF('INV-2026-003', 'March 2026', '17284')">PDF</button></td>
+                    </tr>
+                    <tr>
+                        <td>INV-2026-002</td>
+                        <td>February 2026</td>
+                        <td>₱ 17,284</td>
+                        <td>Mar 3, 2026</td>
+                        <td><span class="payment-status paid">Paid</span></td>
+                        <td><button class="btn-pdf" onclick="downloadHistoryPDF('INV-2026-002', 'February 2026', '17284')">PDF</button></td>
+                    </tr>
+                    <tr>
+                        <td>INV-2026-001</td>
+                        <td>January 2026</td>
+                        <td>₱ 17,284</td>
+                        <td>Feb 2, 2026</td>
+                        <td><span class="payment-status paid">Paid</span></td>
+                        <td><button class="btn-pdf" onclick="downloadHistoryPDF('INV-2026-001', 'January 2026', '17284')">PDF</button></td>
+                    </tr>
+                    <tr>
+                        <td>INV-2025-012</td>
+                        <td>December 2025</td>
+                        <td>₱ 15,750</td>
+                        <td>Jan 5, 2026</td>
+                        <td><span class="payment-status paid">Paid</span></td>
+                        <td><button class="btn-pdf" onclick="downloadHistoryPDF('INV-2025-012', 'December 2025', '15750')">PDF</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- LAB RESULTS TAB -->
+        <div class="tab-content" id="tab-results">
+            <!-- Alert Banner -->
+            <div class="alert-banner">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>3 Results have abnormal values - review before releasing to patient</span>
+            </div>
+            
+            <!-- Patient Card 1 - Abnormal -->
+            <div class="patient-card abnormal">
+                <div class="patient-header">
+                    <div class="patient-info">
+                        <h3>Antoinette Curitana <span style="font-weight:400;color:#888;font-size:13px;">· F, 19y · PT-12654562</span></h3>
+                        <div class="patient-meta">
+                            Dr. Katarina Yu · Apr 7, 2026 <span class="req-id">#REQ-2026-001</span>
+                        </div>
+                    </div>
+                    <div class="patient-actions">
+                        <span class="status-tag abnormal">
+                            <i class="fas fa-exclamation-triangle"></i> Abnormal
+                        </span>
+                        <button class="btn-pdf" onclick="downloadPatientPDF('Antoinette Curitana', 'abnormal')">
+                            <i class="fas fa-download"></i> PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>TEST</th>
+                            <th>RESULT</th>
+                            <th>REFERENCE RANGE</th>
+                            <th>FLAG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>HbA1c</td>
+                            <td class="result-value high">7.8%</td>
+                            <td>4.0-5.6%</td>
+                            <td class="flag high">↑ HIGH</td>
+                        </tr>
+                        <tr>
+                            <td>Fasting Glucose</td>
+                            <td class="result-value high">148mg/DL</td>
+                            <td>70/100 mg/DL</td>
+                            <td class="flag high">↑ HIGH</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Patient Card 2 - Normal -->
+            <div class="patient-card normal">
+                <div class="patient-header">
+                    <div class="patient-info">
+                        <h3>Pedro Bautista <span style="font-weight:400;color:#888;font-size:13px;">· M, 64y · PT-12654562</span></h3>
+                        <div class="patient-meta">
+                            Dr. Katarina Yu · Apr 7, 2026 <span class="req-id">#REQ-2026-002</span>
+                        </div>
+                    </div>
+                    <div class="patient-actions">
+                        <span class="status-tag normal">Normal</span>
+                        <button class="btn-pdf" onclick="downloadPatientPDF('Pedro Bautista', 'normal')">
+                            <i class="fas fa-download"></i> PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>TEST</th>
+                            <th>RESULT</th>
+                            <th>REFERENCE RANGE</th>
+                            <th>FLAG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CBC-WBC</td>
+                            <td class="result-value normal">7.2 x 10/L</td>
+                            <td>4.5-11.0</td>
+                            <td class="flag normal">Normal</td>
+                        </tr>
+                        <tr>
+                            <td>CBC-Hemoglobin</td>
+                            <td class="result-value normal">148mg/DL</td>
+                            <td>13.5 - 17.5</td>
+                            <td class="flag normal">Normal</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-  </div>
-
-  <div id="tab-invoice" class="tab-content-panel">
-    <table class="invoice-table">
-      <thead>
-        <tr>
-          <th>Invoice #</th>
-          <th>Date</th>
-          <th>Patient</th>
-          <th>Tests</th>
-          <th>Amount</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>#INV-2026-041</strong></td>
-          <td>Apr 7, 2026</td>
-          <td>Antoinette Curitana</td>
-          <td>HbA1c, Fasting Glucose</td>
-          <td><strong>₱ 1,200.00</strong></td>
-          <td><span class="status-unpaid">Unpaid</span></td>
-          <td><button class="btn-pdf" style="padding:5px 12px;font-size:0.72rem;" onclick="showToast('Invoice #INV-2026-041 marked as paid')">Pay Now</button></td>
-        </tr>
-        <tr>
-          <td><strong>#INV-2026-042</strong></td>
-          <td>Apr 7, 2026</td>
-          <td>Pedro Bautista</td>
-          <td>CBC-WBC, CBC-Hemoglobin</td>
-          <td><strong>₱ 950.00</strong></td>
-          <td><span class="status-paid">Paid</span></td>
-          <td><button class="btn-pdf" style="padding:5px 12px;font-size:0.72rem;" onclick="openPdfModal('Pedro Bautista', 'INV-2026-042')"><i class="bi bi-download"></i> PDF</button></td>
-        </tr>
-        <tr>
-          <td><strong>#INV-2026-043</strong></td>
-          <td>Apr 7, 2026</td>
-          <td>Rosa Dela Cruz</td>
-          <td>Cholesterol Panel</td>
-          <td><strong>₱ 1,500.00</strong></td>
-          <td><span class="status-unpaid">Unpaid</span></td>
-          <td><button class="btn-pdf" style="padding:5px 12px;font-size:0.72rem;" onclick="showToast('Invoice #INV-2026-043 marked as paid')">Pay Now</button></td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="4" style="text-align:right;">Total Outstanding</td>
-          <td>₱ 2,700.00</td>
-          <td colspan="2"></td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-
-  <div id="tab-history" class="tab-content-panel">
-    <div class="history-card">
-      <div>
-        <div style="font-weight:600;font-size:0.82rem;">INV-2026-038 · Pedro Bautista</div>
-        <div class="history-date">Mar 15, 2026</div>
-        <div class="history-ref">Ref: GCash #TXN-884921</div>
-      </div>
-      <div style="text-align:right;">
-        <div class="history-amount">₱ 950.00</div>
-        <span class="status-paid">Paid</span>
-      </div>
-    </div>
-    <div class="history-card">
-      <div>
-        <div style="font-weight:600;font-size:0.82rem;">INV-2026-029 · Antoinette Curitana</div>
-        <div class="history-date">Mar 2, 2026</div>
-        <div class="history-ref">Ref: BDO #TXN-779021</div>
-      </div>
-      <div style="text-align:right;">
-        <div class="history-amount">₱ 1,200.00</div>
-        <span class="status-paid">Paid</span>
-      </div>
-    </div>
-    <div class="history-card">
-      <div>
-        <div style="font-weight:600;font-size:0.82rem;">INV-2026-018 · Rosa Dela Cruz</div>
-        <div class="history-date">Feb 11, 2026</div>
-        <div class="history-ref">Ref: Cash Payment</div>
-      </div>
-      <div style="text-align:right;">
-        <div class="history-amount">₱ 1,500.00</div>
-        <span class="status-paid">Paid</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="pdfModal">
-  <div class="modal-box">
-    <div class="modal-title" id="modalTitle">Download Lab Result PDF</div>
-    <div class="modal-body" id="modalBody">Download the lab result report as a PDF file?</div>
-    <div class="modal-actions">
-      <button class="modal-btn-cancel" onclick="closePdfModal()">Cancel</button>
-      <button class="modal-btn-download" onclick="confirmPdfDownload()"><i class="bi bi-download"></i> Download PDF</button>
-    </div>
-  </div>
-</div>
-
-<!-- Toast -->
-<div class="toast-msg" id="toast"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => t.classList.remove('show'), 2800);
-  }
-
-  function switchTab(tab, btn) {
-    document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + tab).classList.add('active');
-    btn.classList.add('active');
-  }
-
-  let currentPdfPatient = '';
-  let currentPdfReq = '';
-
-  function openPdfModal(patient, req) {
-    currentPdfPatient = patient;
-    currentPdfReq = req;
-    document.getElementById('modalTitle').textContent = 'Download Lab Result PDF';
-    document.getElementById('modalBody').textContent =
-  `Download the lab result report for ${patient} (${req}) as a PDF file?`;
-    document.getElementById('pdfModal').classList.add('show');
-  }
-
-  function closePdfModal() {
-    document.getElementById('pdfModal').classList.remove('show');
-  }
-
-  function confirmPdfDownload() {
-    closePdfModal();
-    showToast(`PDF downloaded for ${currentPdfPatient}`);
-
-    const printWin = window.open('', '_blank', 'width=700,height=900');
-    const now = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' });
-    printWin.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Lab Result - ${currentPdfPatient}</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 40px; font-size: 13px; }
-          h1 { font-size: 20px; margin-bottom: 4px; }
-          .sub { color: #666; font-size: 11px; margin-bottom: 24px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-          th { background: #f0f0f0; padding: 8px 12px; text-align: left; font-size: 11px; text-transform: uppercase; border: 1px solid #ddd; }
-          td { padding: 8px 12px; border: 1px solid #ddd; }
-          .footer { margin-top: 40px; font-size: 11px; color: #999; }
-        </style>
-      </head>
-      <body>
-        <h1>CLINIQ Laboratory Results</h1>
-        <div class="sub">MetroMed Diagnostics · ${now}</div>
-        <p><strong>Patient:</strong> ${currentPdfPatient}</p>
-        <p><strong>Request ID:</strong> ${currentPdfReq}</p>
-        <table>
-          <tr><th>Test</th><th>Result</th><th>Reference Range</th><th>Flag</th></tr>
-          <tr><td colspan="4" style="color:#999;text-align:center;">See original report for full results.</td></tr>
-        </table>
-        <div class="footer">This is a system-generated document from CLINIQ. Please verify with attending physician.</div>
-        <script>window.onload=()=>{window.print();}<\/script>
-      </body>
-      </html>
-    `);
-    printWin.document.close();
-  }
-
-  document.getElementById('pdfModal').addEventListener('click', function(e) {
-    if (e.target === this) closePdfModal();
-  });
-
-  document.querySelector('.sign-out-btn').addEventListener('click', () => {
-    if (confirm('Are you sure you want to sign out?')) {
-      showToast('Signed out successfully.');
-    }
-  });
-
-  document.querySelectorAll('.nav-link-item').forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.querySelectorAll('.nav-link-item').forEach(l => l.classList.remove('active'));
-      this.classList.add('active');
-      showToast('Navigating to ' + this.textContent.trim());
-    });
-  });
-
-</script>
+    <script>
+        const { jsPDF } = window.jspdf;
+        let invoicePaid = false;
+        
+        // Toast
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            let icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Tab Switching
+        function switchTab(tabElement, tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tabElement.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            showToast('Switched to ' + tabElement.textContent, 'info');
+        }
+        
+        // Generate PDF - Patient Results
+        function downloadPatientPDF(patientName, status) {
+            showToast('Generating PDF for ' + patientName + '...', 'info');
+            
+            setTimeout(() => {
+                try {
+                    const doc = new jsPDF();
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    
+                    // Header
+                    doc.setFillColor(109, 184, 156);
+                    doc.rect(0, 0, pageWidth, 40, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(22);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('CLINIQ', 20, 25);
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('Laboratory & Diagnostics', 20, 32);
+                    
+                    // Title
+                    doc.setTextColor(50, 50, 50);
+                    doc.setFontSize(18);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Lab Results Report', 20, 55);
+                    
+                    // Patient Info Box
+                    doc.setFillColor(248, 248, 248);
+                    doc.roundedRect(20, 62, pageWidth - 40, 35, 3, 3, 'F');
+                    doc.setFontSize(11);
+                    doc.setTextColor(80, 80, 80);
+                    doc.text('Patient: ' + patientName, 25, 72);
+                    doc.text('Date: April 7, 2026', 25, 80);
+                    doc.text('Physician: Dr. Katarina Yu', 25, 88);
+                    doc.text('Status: ' + status.toUpperCase(), pageWidth - 60, 72);
+                    
+                    // Results Table
+                    let y = 110;
+                    doc.setFillColor(109, 184, 156);
+                    doc.rect(20, y - 8, pageWidth - 40, 10, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('TEST', 25, y);
+                    doc.text('RESULT', 80, y);
+                    doc.text('REFERENCE RANGE', 130, y);
+                    doc.text('FLAG', pageWidth - 35, y);
+                    
+                    y += 15;
+                    doc.setTextColor(50, 50, 50);
+                    doc.setFont('helvetica', 'normal');
+                    
+                    if (patientName === 'Antoinette Curitana') {
+                        doc.text('HbA1c', 25, y);
+                        doc.setTextColor(198, 40, 40);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('7.8%', 80, y);
+                        doc.setTextColor(50, 50, 50);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('4.0-5.6%', 130, y);
+                        doc.setTextColor(198, 40, 40);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('HIGH', pageWidth - 40, y);
+                        
+                        y += 12;
+                        doc.setTextColor(50, 50, 50);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('Fasting Glucose', 25, y);
+                        doc.setTextColor(198, 40, 40);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('148mg/DL', 80, y);
+                        doc.setTextColor(50, 50, 50);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('70/100 mg/DL', 130, y);
+                        doc.setTextColor(198, 40, 40);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('HIGH', pageWidth - 40, y);
+                    } else {
+                        doc.text('CBC-WBC', 25, y);
+                        doc.setTextColor(46, 125, 50);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('7.2 x 10/L', 80, y);
+                        doc.setTextColor(50, 50, 50);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('4.5-11.0', 130, y);
+                        doc.setTextColor(46, 125, 50);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Normal', pageWidth - 45, y);
+                        
+                        y += 12;
+                        doc.setTextColor(50, 50, 50);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('CBC-Hemoglobin', 25, y);
+                        doc.setTextColor(46, 125, 50);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('148mg/DL', 80, y);
+                        doc.setTextColor(50, 50, 50);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('13.5 - 17.5', 130, y);
+                        doc.setTextColor(46, 125, 50);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Normal', pageWidth - 45, y);
+                    }
+                    
+                    // Footer
+                    doc.setTextColor(150, 150, 150);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('Generated by CLINIQ System on ' + new Date().toLocaleString(), 20, 280);
+                    doc.text('This is an official laboratory report. Please consult your physician for interpretation.', 20, 285);
+                    
+                    doc.save('CLINIQ_' + patientName.replace(/ /g, '_') + '_Results.pdf');
+                    showToast('PDF downloaded successfully!', 'success');
+                } catch (e) {
+                    showToast('Error generating PDF: ' + e.message, 'error');
+                }
+            }, 500);
+        }
+        
+        // Generate PDF - Invoice
+        function downloadInvoicePDF() {
+            showToast('Generating invoice PDF...', 'info');
+            
+            setTimeout(() => {
+                try {
+                    const doc = new jsPDF();
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    
+                    // Header
+                    doc.setFillColor(109, 184, 156);
+                    doc.rect(0, 0, pageWidth, 40, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(22);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('CLINIQ', 20, 25);
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('Laboratory & Diagnostics', 20, 32);
+                    
+                    // Invoice Title
+                    doc.setTextColor(50, 50, 50);
+                    doc.setFontSize(18);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Invoice - April 2026', 20, 55);
+                    
+                    // Clinic Info
+                    doc.setFontSize(11);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(80, 80, 80);
+                    doc.text('Bill To: St. Luke\'s Family Clinic', 20, 68);
+                    doc.text('Date: April 2026', 20, 76);
+                    doc.text('Status: ' + (invoicePaid ? 'PAID' : 'UNPAID'), 20, 84);
+                    
+                    // Table Header
+                    let y = 100;
+                    doc.setFillColor(109, 184, 156);
+                    doc.rect(20, y - 8, pageWidth - 40, 10, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('TEST', 25, y);
+                    doc.text('QTY', 90, y);
+                    doc.text('PRICE', 120, y);
+                    doc.text('TOTAL', pageWidth - 40, y);
+                    
+                    // Table Data
+                    y += 15;
+                    const items = [
+                        ['CBC', '14', '₱350', '₱4,900'],
+                        ['Urinalysis', '20', '₱220', '₱4,400'],
+                        ['Lipid Panel', '10', '₱680', '₱6,800'],
+                        ['HbA1c', '7', '₱550', '₱3,850'],
+                        ['Thyroid Panel', '5', '₱1,220', '₱6,100']
+                    ];
+                    
+                    doc.setTextColor(50, 50, 50);
+                    doc.setFont('helvetica', 'normal');
+                    items.forEach(item => {
+                        doc.text(item[0], 25, y);
+                        doc.text(item[1], 90, y);
+                        doc.text(item[2], 120, y);
+                        doc.text(item[3], pageWidth - 45, y);
+                        y += 12;
+                    });
+                    
+                    // Summary
+                    y += 10;
+                    doc.setDrawColor(200, 200, 200);
+                    doc.line(20, y - 5, pageWidth - 20, y - 5);
+                    
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('Subtotal', 25, y);
+                    doc.text('₱26,050', pageWidth - 45, y);
+                    
+                    y += 10;
+                    doc.setTextColor(124, 179, 66);
+                    doc.text('Bulk Discount', 25, y);
+                    doc.text('-₱4,520', pageWidth - 45, y);
+                    
+                    y += 15;
+                    doc.setDrawColor(109, 184, 156);
+                    doc.setLineWidth(0.5);
+                    doc.line(20, y - 8, pageWidth - 20, y - 8);
+                    doc.setTextColor(50, 50, 50);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(13);
+                    doc.text('Total Due', 25, y);
+                    doc.text('₱21,530', pageWidth - 50, y);
+                    
+                    // Footer
+                    doc.setTextColor(150, 150, 150);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('Thank you for choosing CLINIQ Laboratory Services.', 20, 280);
+                    doc.text('Generated on ' + new Date().toLocaleString(), 20, 285);
+                    
+                    doc.save('CLINIQ_Invoice_April2026.pdf');
+                    showToast('Invoice PDF downloaded!', 'success');
+                } catch (e) {
+                    showToast('Error generating PDF: ' + e.message, 'error');
+                }
+            }, 500);
+        }
+        
+        // Generate PDF - Payment History
+        function downloadHistoryPDF(invNum, period, amount) {
+            showToast('Generating PDF for ' + invNum + '...', 'info');
+            
+            setTimeout(() => {
+                try {
+                    const doc = new jsPDF();
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    
+                    // Header
+                    doc.setFillColor(109, 184, 156);
+                    doc.rect(0, 0, pageWidth, 40, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(22);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('CLINIQ', 20, 25);
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('Laboratory & Diagnostics', 20, 32);
+                    
+                    // Title
+                    doc.setTextColor(50, 50, 50);
+                    doc.setFontSize(18);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Payment Receipt', 20, 55);
+                    
+                    // Receipt Info Box
+                    doc.setFillColor(248, 248, 248);
+                    doc.roundedRect(20, 62, pageWidth - 40, 40, 3, 3, 'F');
+                    doc.setFontSize(11);
+                    doc.setTextColor(80, 80, 80);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('Invoice Number: ' + invNum, 25, 72);
+                    doc.text('Billing Period: ' + period, 25, 80);
+                    doc.text('Amount Paid: ₱' + amount, 25, 88);
+                    doc.text('Status: PAID', 25, 96);
+                    
+                    // Paid stamp
+                    doc.setTextColor(46, 125, 50);
+                    doc.setFontSize(30);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('PAID', pageWidth - 80, 85);
+                    
+                    // Footer
+                    doc.setTextColor(150, 150, 150);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('This serves as your official payment receipt.', 20, 280);
+                    doc.text('Generated on ' + new Date().toLocaleString(), 20, 285);
+                    
+                    doc.save('CLINIQ_Receipt_' + invNum + '.pdf');
+                    showToast('Receipt PDF downloaded!', 'success');
+                } catch (e) {
+                    showToast('Error generating PDF: ' + e.message, 'error');
+                }
+            }, 500);
+        }
+        
+        // Modal
+        function openPaymentModal() {
+            if (invoicePaid) {
+                showToast('Invoice is already marked as paid', 'info');
+                return;
+            }
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+        
+        function confirmPayment() {
+            invoicePaid = true;
+            
+            const statusBadge = document.getElementById('invoiceStatus');
+            statusBadge.textContent = 'Paid';
+            statusBadge.classList.add('paid');
+            
+            const btn = document.getElementById('markPaidBtn');
+            btn.textContent = 'Paid ✓';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-success');
+            btn.disabled = true;
+            
+            closeModal();
+            showToast('Invoice marked as paid successfully!', 'success');
+        }
+        
+        // Sign Out
+        function signOut() {
+            showToast('Signing out...', 'info');
+            setTimeout(() => location.reload(), 1500);
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        
+        // Keyboard support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
 </body>
-</html>
+</html>'''
+
+
